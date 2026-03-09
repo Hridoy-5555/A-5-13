@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Issues Tracker</title>
+
+<style>
+
+body{
+font-family: Arial;
+margin:0;
+background:#f5f5f5;
+}
+
+
+
+#loginPage{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.login-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 360px;
+}
+
+.login-box h1 {
+    font-size: 1.75rem;
+    margin: 0.5rem 0;
+}
+
+.login-box p {
+    color: #606770;
+    margin-bottom: 1.5rem;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 14px;
+    margin: 0.5rem 0;
+    border-radius: 6px;
+    border: 1px solid #dddfe2;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #24292e;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+
+
+#mainPage{
+display:none;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#222;
+color:white;
+}
+
+nav input {
+    padding: 10px;
+    margin-right: 5px;
+    width: 200px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #444;
+    color: white;
+}
+
+nav button {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: #555;
+    color: white;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+padding:20px;
+}
+
+.tabs button{
+    padding:10px 15px;
+    cursor:pointer;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+}
+
+.tabs button.active {
+    background-color: #24292e;
+    color: white;
+    border-color: #24292e;
+}
+
+.issue-stats {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    align-items: center;
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+#issuesContainer{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+padding:20px;
+}
+
+
+.card{
+background:white;
+padding:15px;
+border-radius:6px;
+border-top:5px solid gray;
+}
+
+.open{
+border-top:5px solid green;
+}
+
+.closed{
+border-top:5px solid purple;
+}
+
+/* MODAL */
+
+#modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+padding:20px;
+    width: 300px;
+    border-radius: 8px;
+}
+
+.modal-content button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: #555;
+    color: white;
+}
+
+.spinner {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #24292e;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 50px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media(max-width:768px){
+
+#issuesContainer{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div id="loginPage">
+    <div class="login-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <h1>GitHub Issues Tracker</h1>
+        <p>Manage project issues easily</p>
+        <input id="username" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="login()">Sign In</button>
+        <p>Demo: admin / admin123</p>
+    </div>
+</div>
+
+
+
+<div id="mainPage">
+
+<nav>
+
+<div style="display:flex; align-items:center; gap:10px;">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+<h2>Issues Tracker</h2>
+</div>
+
+<div>
+<input id="searchInput" placeholder="Search issue">
+<button onclick="searchIssue()">Search</button>
+</div>
+
+</nav>
+
+
+
+<div class="issue-stats">
+    <div class="tabs" style="padding:0;">
+        <button id="all-tab" onclick="loadIssues()">All</button>
+        <button id="open-tab" onclick="filterStatus('open')">Open</button>
+        <button id="closed-tab" onclick="filterStatus('closed')">Closed</button>
+    </div>
+    <div style="display:flex; gap:15px; font-weight:bold; align-items:center;">
+        <span id="allCountText">0 Issues</span>
+        <span style="display:flex; align-items:center; gap:5px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="green" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+        </svg>
+        <span id="openCountText">0 Open</span>
+        </span>
+        <span style="display:flex; align-items:center; gap:5px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="purple" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </svg>
+        <span id="closedCountText">0 Closed</span>
+        </span>
+    </div>
+</div>
+
+<div id="loadingSpinner" class="spinner"></div>
+
+
+<div id="issuesContainer"></div>
+
+</div>
+
+
+
+<div id="modal">
+
+<div class="modal-content">
+
+<h3 id="modalTitle"></h3>
+<p id="modalDesc"></p>
+<p id="modalStatus"></p>
+<p id="modalAuthor"></p>
+<p id="modalPriority"></p>
+<p id="modalCategory"></p>
+<p id="modalLabel"></p>
+<p id="modalDate"></p>
+
+<button onclick="closeModal()">Close</button>
+
+</div>
+
+</div>
+
+<script>
+
+
+
+function login(){
+
+const user=document.getElementById("username").value
+const pass=document.getElementById("password").value
+
+if(user==="admin" && pass==="admin123"){
+
+document.getElementById("loginPage").style.display="none"
+document.getElementById("mainPage").style.display="block"
+
+loadIssues()
+
+}else{
+
+alert("Invalid Credentials")
+
+}
+
+}
+
+
+
+const API="https://phi-lab-server.vercel.app/api/v1/lab/issues"
+
+
+
+async function loadIssues(){
+
+updateActiveTab('all-tab')
+document.getElementById('loadingSpinner').style.display = 'block';
+document.getElementById('issuesContainer').innerHTML = '';
+
+const res=await fetch(API)
+const data=await res.json()
+
+displayIssues(data.data)
+updateStatusCounts(data.data)
+document.getElementById('loadingSpinner').style.display = 'none';
+
+}
+
+
+
+function displayIssues(issues){
+
+const container=document.getElementById("issuesContainer")
+
+container.innerHTML=""
+
+issues.forEach(issue=>{
+
+const card=document.createElement("div")
+
+card.className="card"
+
+card.classList.add(issue.status.toLowerCase())
+
+card.innerHTML=`
+
+<h3 onclick="openModal('${issue._id}')">
+
+${issue.title}
+
+</h3>
+
+<p>${issue.description}</p>
+
+<p>Status: ${issue.status}</p>
+<p>Category: ${issue.category}</p>
+<p>Author: ${issue.author}</p>
+<p>Priority: ${issue.priority}</p>
+<p>Label: ${issue.label}</p>
+<p>Created: ${issue.createdAt}</p>
+
+`
+
+container.appendChild(card)
+
+})
+
+}
+
+function updateStatusCounts(issues){
+    const open = issues.filter(issue => issue.status.toLowerCase() === 'open').length
+    const closed = issues.filter(issue => issue.status.toLowerCase() === 'closed').length
+    const all = issues.length;
+
+    document.getElementById("allCountText").innerText = `${all} Issues`;
+    document.getElementById("openCountText").innerText = `${open} Open`
+    document.getElementById("closedCountText").innerText = `${closed} Closed`
+}
+
+
+
+async function filterStatus(status){
+
+updateActiveTab(`${status}-tab`)
+document.getElementById('loadingSpinner').style.display = 'block';
+document.getElementById('issuesContainer').innerHTML = '';
+
+const res=await fetch(API)
+
+const data=await res.json()
+
+const filtered=data.data.filter(issue=>issue.status.toLowerCase()===status)
+updateStatusCounts(filtered)
+
+displayIssues(filtered)
+document.getElementById('loadingSpinner').style.display = 'none';
+
+}
+
+
+
+function searchIssue(){
+
+const text=document.getElementById("searchInput").value
+
+document.getElementById('loadingSpinner').style.display = 'block';
+document.getElementById('issuesContainer').innerHTML = '';
+
+fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${text}`)
+
+.then(res=>res.json())
+
+.then(data=>{
+    displayIssues(data.data)
+    updateStatusCounts(data.data)
+    document.getElementById('loadingSpinner').style.display = 'none';
+})
+
+}
+
+
+
+async function openModal(id){
+
+document.getElementById("modal").style.display="flex"
+
+const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
+const data = await res.json()
+const issue = data
+
+document.getElementById("modalTitle").innerText=issue.title
+document.getElementById("modalDesc").innerText=issue.description
+document.getElementById("modalStatus").innerText="Status: "+issue.status
+document.getElementById("modalAuthor").innerText="Author: "+issue.author
+document.getElementById("modalPriority").innerText="Priority: "+issue.priority
+document.getElementById("modalCategory").innerText="Category: "+issue.category
+document.getElementById("modalLabel").innerText="Label: "+issue.label
+document.getElementById("modalDate").innerText="Created: "+issue.createdAt
+
+}
+
+function updateActiveTab(activeTabId) {
+    const tabButtons = document.querySelectorAll('.tabs button');
+    tabButtons.forEach(button => {
+        if (button.id === activeTabId) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
+function closeModal(){
+
+document.getElementById("modal").style.display="none"
+
+}
+
+</script>
+
+</body>
+</html>
