@@ -143,6 +143,14 @@ background:white;
 padding:15px;
 border-radius:6px;
 border-top:5px solid gray;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+animation: fadeIn 0.5s ease-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
 .open{
@@ -156,15 +164,24 @@ border-top:5px solid purple;
 
 
 #modal{
-display:none;
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
 background:rgba(0,0,0,0.6);
+display:flex;
 justify-content:center;
 align-items:center;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s ease, visibility 0.3s ease;
+z-index: 1000;
+}
+
+#modal.show {
+    opacity: 1;
+    visibility: visible;
 }
 
 .modal-content{
@@ -172,6 +189,8 @@ background:white;
 padding:20px;
     width: 300px;
     border-radius: 8px;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
 }
 
 .modal-content button {
@@ -198,6 +217,17 @@ padding:20px;
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media(max-width:768px){
@@ -253,9 +283,9 @@ grid-template-columns:1fr;
             <button id="open-tab" onclick="filterStatus('open')">Open</button>
             <button id="closed-tab" onclick="filterStatus('closed')">Closed</button>
         </div>
-        <span id="allCountText" style="font-weight:bold;">0 Issues</span>
     </div>
     <div style="display:flex; gap:15px; font-weight:bold; align-items:center;">
+        <span id="allCountText" style="font-weight:bold;">0 Issues</span>
         <span style="display:flex; align-items:center; gap:5px;">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="green" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -449,7 +479,7 @@ fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${text}`)
 
 async function openModal(id){
 
-document.getElementById("modal").style.display="flex"
+document.getElementById("modal").classList.add("show");
 
 const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
 const data = await res.json()
@@ -479,7 +509,7 @@ function updateActiveTab(activeTabId) {
 
 function closeModal(){
 
-document.getElementById("modal").style.display="none"
+document.getElementById("modal").classList.remove("show");
 
 }
 
