@@ -65,7 +65,10 @@ align-items:center;
     margin-top: 0.5rem;
 }
 
-
+.login-box button:hover {
+    background-color: #3a4047;
+    transition: background-color 0.2s;
+}
 
 #mainPage{
 display:none;
@@ -99,6 +102,11 @@ nav button {
     color: white;
 }
 
+nav button:hover {
+    background: #666;
+    transition: background-color 0.2s;
+}
+
 .tabs{
 display:flex;
 gap:10px;
@@ -111,6 +119,11 @@ padding:20px;
     border: 1px solid #ddd;
     background: white;
     border-radius: 6px;
+}
+
+.tabs button:not(.active):hover {
+    background-color: #f0f0f0;
+    transition: background-color 0.2s;
 }
 
 .tabs button.active {
@@ -201,6 +214,11 @@ padding:20px;
     border-radius: 4px;
     background: #555;
     color: white;
+}
+
+.modal-content button:hover {
+    background: #666;
+    transition: background-color 0.2s;
 }
 
 .spinner {
