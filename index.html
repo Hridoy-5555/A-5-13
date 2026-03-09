@@ -361,12 +361,20 @@ card.className="card"
 
 card.classList.add(issue.status.toLowerCase())
 
+const icon = issue.status.toLowerCase() === 'open' ? 
+    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" viewBox="0 0 16 16" style="flex-shrink: 0;">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+    </svg>` :
+    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="purple" viewBox="0 0 16 16" style="flex-shrink: 0;">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </svg>`;
+
 card.innerHTML=`
 
-<h3 onclick="openModal('${issue._id}')">
-
-${issue.title}
-
+<h3 onclick="openModal('${issue._id}')" style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+    ${icon}
+    <span>${issue.title}</span>
 </h3>
 
 <p>${issue.description}</p>
